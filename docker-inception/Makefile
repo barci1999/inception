@@ -1,25 +1,37 @@
-GREEN=\033[0;32m
-NC=\033[0m
+COMPOSE_FILE = src/docker-compose.yml
+DATA_DIR = /home/$(USER)/data
 
-DATA_DIR=/home/${USER}/data
+.PHONY: all build up down clean fclean re
 
-all:up
+all: build up
 
-up:
-	@echo "$(GREEN)levantando contenedores$(NC)"
-	docker compose -f src/docker-compose.yml up -d --build
+# Create data directories
+$(DATA_DIR)/mariadb:
+	mkdir -p $(DATA_DIR)/mariadb
+
+$(DATA_DIR)/wordpress:
+	mkdir -p $(DATA_DIR)/wordpress
+
+# Build images
+build: $(DATA_DIR)/mariadb $(DATA_DIR)/wordpress
+	docker compose -f $(COMPOSE_FILE) build
+
+# Start services
+up: build
+	docker compose -f $(COMPOSE_FILE) up -d
+
+# Stop services
 down:
-	@echo "$(GREEN)Deteniendo contenerdores$(NC)"
-	docker compose -f src/docker-compose.yml down --rmi all
-	sudo rm -rf $(DATA_DIR)
+	docker compose -f $(COMPOSE_FILE) down
 
-clean: down
-	@echo "$(GREEN)Insterte contraseña para eliminar las carpetas$(NC)"
-	sudo rm -rf $(DATA_DIR)
+# Stop containers (no prune global)
+clean:
+	docker compose -f $(COMPOSE_FILE) down --rmi local
 
+# Full clean (project only)
 fclean: clean
-	@echo "$(GREEN)Limpiando docker (imagenes,contenedores,redes...)$(NC)"
-	docker system prune -af
+	sudo rm -rf $(DATA_DIR)
+	sudo docker system prune -af
 
+# Rebuild everything
 re: fclean all
-
