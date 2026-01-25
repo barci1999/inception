@@ -29,6 +29,8 @@ services:
       - inception-network
     volumes:
       - wordpress_data:/var/www/html
+    env_file:
+      - .env
     environment:
       WORDPRESS_DB_HOST: mariadb
       WORDPRESS_DB_NAME: ${MYSQL_DATABASE}

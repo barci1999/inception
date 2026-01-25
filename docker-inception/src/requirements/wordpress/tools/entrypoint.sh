@@ -53,6 +53,14 @@ EOF
     chown -R www-data:www-data "$WP_PATH"
 
     echo "WordPress setup complete."
+    wp core install --allow-root\
+    --url="${DOMAIN_NAME}"\
+    --title="${WORDPRESS_TITLE}"\
+    --admin_user="${WORDPRESS_WEB_ADMIN}"\
+    --admin_password="${WEB_ADMIN_PASWORD}"\
+    --admin_email="${WEB_ADMIN_EMAIL}"\
+    --skip-email
+
 else
     echo "WordPress already initialized, skipping setup."
 fi
