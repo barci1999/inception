@@ -61,6 +61,13 @@ EOF
     --admin_email="${WEB_ADMIN_EMAIL}"\
     --skip-email
 
+    wp user create --allow-root \
+    $WORDPRESS_WEB_USER \
+    $WEB_USER_EMAIL \
+    --role=author \
+    --user_pass=$WORDPRESS_WEB_USER_PASS \
+    
+
 else
     echo "WordPress already initialized, skipping setup."
 fi
